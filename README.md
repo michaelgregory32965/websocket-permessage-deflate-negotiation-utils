@@ -34,3 +34,10 @@ The `Sec-WebSocket-Extensions` header is a comma-separated list of extensions wh
 ## The awkward edge
 
 A valueless `client_max_window_bits` in an offer is a request for the server to choose a window size, while a valued one is a hard constraint. `negotiate` therefore answers the valueless form with `client_max_window_bits=15` and echoes any concrete value unchanged. The same parameter name means two different things depending on whether `=value` was present, and this library keeps that distinction rather than collapsing it.
+
+## Design notes
+
+The window stores values eagerly rather than keeping running aggregates. Running
+sums drift with floating point over long streams, and recomputing from a small
+buffer is cheap enough that the drift is not worth the speed.
+
